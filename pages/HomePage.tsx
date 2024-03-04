@@ -5,8 +5,11 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { useDispatch } from "react-redux";
 import { setDestination, setOrigin } from "../slice/navSlice";
+import NavFavorites from "../components/NavFavorites";
 
-const HomePage = () => {
+const HomePage = ({ route }: { route: any }) => {
+  const userName = route.params?.userName;
+
   const dispatch = useDispatch();
   return (
     <SafeAreaView className=" h-full ">
@@ -32,14 +35,18 @@ const HomePage = () => {
           }}
           minLength={2}
           enablePoweredByContainer={false}
+          fetchDetails={true}
           onPress={(data, details = null) => {
-            dispatch(
-              setOrigin({
-                location: details?.geometry?.location,
-                description: data.description,
-              })
-            );
-            dispatch(setDestination(null));
+            if (details && details.geometry && details.geometry.location) {
+              dispatch(
+                setOrigin({
+                  location: details.geometry.location,
+                  description: data.description,
+                })
+              );
+              dispatch(setDestination(null));
+            } else {
+            }
           }}
           placeholder="Where From"
           nearbyPlacesAPI="GooglePlacesSearch"
@@ -49,6 +56,7 @@ const HomePage = () => {
           }}
         />
         <NavOptions />
+        <NavFavorites useForDestination={false} />
       </View>
     </SafeAreaView>
   );
