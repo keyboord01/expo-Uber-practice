@@ -9,6 +9,8 @@ import {
 import React from "react";
 import { Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { selectOrigin } from "../slice/navSlice";
 
 interface DataItem {
   id: string;
@@ -34,6 +36,7 @@ const data: DataItem[] = [
 
 export default function () {
   const navigation = useNavigation();
+  const origin = useSelector(selectOrigin);
 
   return (
     <View>
@@ -42,22 +45,23 @@ export default function () {
         horizontal
         renderItem={({ item }) => (
           <TouchableOpacity
+            disabled={!origin}
             onPress={() => navigation.navigate(item.page as never)}
             className="p-2 pl-6 pb-8 pt-4 bg-gray-200 m-2 w-40"
           >
-            <View>
+            <View className={`${!origin && "opacity-20"}`}>
               <Image
                 style={{ width: 120, height: 120, resizeMode: "contain" }}
                 source={{ uri: item.image }}
               />
+              <Text className="text-lg mt-2 font-semibold">{item.title}</Text>
+              <Icon
+                type="antdesign"
+                name="arrowright"
+                color="white"
+                className="p-2 bg-black  rounded-full w-10 mt-4"
+              />
             </View>
-            <Text className="text-lg mt-2 font-semibold">{item.title}</Text>
-            <Icon
-              type="antdesign"
-              name="arrowright"
-              color="white"
-              className="p-2 bg-black  rounded-full w-10 mt-4"
-            />
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id}
